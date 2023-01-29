@@ -1,5 +1,7 @@
 const User = require("../models/User");
 const asyncWrapper = require("../middleware/asyncWrapper");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const getUsers = asyncWrapper(async (req, res) => {
   const users = await User.find();
@@ -16,9 +18,19 @@ const getUser = asyncWrapper(async (req, res, next) => {
   res.status(200).json({ success: true, data: user });
 });
 
+//this is basically a register functionality
 const createUser = asyncWrapper(async (req, res) => {
-  const user = await User.create(req.body);
-  res.status(201).json({ success: true, data: user });
+  //hash passwords
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+  const user = await User.create({
+    name: req.body.name,
+    password: hashedPassword,
+  });
+  const savedUser = await user.save();
+
+  res.status(201).json({ success: true, data: savedUser });
 });
 
 const deleteUser = asyncWrapper(async (req, res, next) => {
@@ -31,9 +43,24 @@ const deleteUser = asyncWrapper(async (req, res, next) => {
   res.status(200).json({ success: true, data: {} });
 });
 
+const loginUser = asyncWrapper(async (req, res, next) => {
+  const { name, password } = req.body;
+  const userName = await User.findOne({ name: name });
+  if (!userName) return res.status(400).send("Name does not exist");
+  //validate password
+  //compare the password from the request with the password from the database
+  const validPass = await bcrypt.compare(password, userName.password);
+  if (!validPass) return res.status(400).send("Invalid password");
+  //create and assign a token
+  //sends the user id with the token
+  const token = jwt.sign({ _id: userName._id }, process.env.TOKEN_SECRET);
+  res.header("auth-token", token).send(token);
+});
+
 module.exports = {
   getUsers,
   getUser,
   createUser,
   deleteUser,
+  loginUser,
 };
