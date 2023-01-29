@@ -12,9 +12,11 @@ const connectDB = require("./database/connect");
 app.use(express.json());
 //import routes
 const userRoutes = require("./routes/users");
+const authRoutes = require("./routes/auth");
 
 //route middlewares
 app.use("/users", userRoutes);
+app.use("/auth", authRoutes);
 
 const port = 3000;
 
