@@ -11,10 +11,10 @@ const connectDB = require("./database/connect");
 
 app.use(express.json());
 //import routes
-const clientRoutes = require("./routes/clients");
+const userRoutes = require("./routes/users");
 
 //route middlewares
-app.use("/clients", clientRoutes);
+app.use("/users", userRoutes);
 
 const port = 3000;
 
