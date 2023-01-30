@@ -10,7 +10,7 @@ const generateAccessToken = (user) => {
     { id: user.id, isAdmin: user.isAdmin },
     "secretKey",
     //expiration time
-    { expiresIn: "20s" }
+    { expiresIn: "2000s" }
   );
 };
 const generateRefreshToken = (user) => {

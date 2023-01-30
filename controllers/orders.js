@@ -20,17 +20,14 @@ const createOrder = asyncWrapper(async (req, res) => {
   const { stockCode, color, size, quantity, personalization, notes, user } =
     req.body;
   const order = await Order.create({
-    user: user._id,
-    orderItems: [
-      {
-        stockCode: stockCode,
-        color: color,
-        size: size,
-        quantity: quantity,
-        personalization: personalization,
-        notes: notes,
-      },
-    ],
+    user: user,
+
+    stockCode: stockCode,
+    color: color,
+    size: size,
+    quantity: quantity,
+    personalization: personalization,
+    notes: notes,
   });
   const savedOrder = await order.save();
 

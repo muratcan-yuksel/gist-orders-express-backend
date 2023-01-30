@@ -72,6 +72,7 @@ const loginUser = asyncWrapper(async (req, res, next) => {
     res.json({
       username: user.name,
       isAdmin: user.isAdmin,
+      userId: user._id,
       accessToken,
       refreshToken,
     });

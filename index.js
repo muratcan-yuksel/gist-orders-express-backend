@@ -13,10 +13,12 @@ app.use(express.json());
 //import routes
 const userRoutes = require("./routes/users");
 const authRoutes = require("./routes/auth");
+const orderRoutes = require("./routes/orders");
 
 //route middlewares
 app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
+app.use("/orders", orderRoutes);
 
 const port = 3000;
 
