@@ -3,6 +3,14 @@ const router = express.Router();
 // const jwtAuthMiddleware = require("../middleware/check-auth");
 
 const {
+  generateAccessToken,
+  generateRefreshToken,
+  refreshTokens,
+  verifyToken,
+  refreshToken,
+} = require("../controllers/auth");
+
+const {
   getUsers,
   getUser,
   createUser,
@@ -10,10 +18,10 @@ const {
   loginUser,
 } = require("../controllers/users");
 
-router.get("/", getUsers);
-router.post("/", createUser);
+router.get("/", verifyToken, getUsers);
+router.post("/", verifyToken, createUser);
 router.post("/login", loginUser);
-router.get("/:id", getUser);
-router.delete("/:id", deleteUser);
+router.get("/:id", verifyToken, getUser);
+router.delete("/:id", verifyToken, deleteUser);
 
 module.exports = router;
