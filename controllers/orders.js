@@ -17,17 +17,34 @@ const getOrder = asyncWrapper(async (req, res, next) => {
 });
 
 const createOrder = asyncWrapper(async (req, res) => {
-  const { stockCode, color, size, quantity, personalization, notes, user } =
-    req.body;
+  const {
+    orderItems,
+    stockCode,
+    color,
+    size,
+    quantity,
+    personalization,
+    notes,
+    user,
+  } = req.body;
+  orderItems.forEach((element) => {
+    orderItems: [
+      {
+        stockCode: element.stockCode,
+        color: element.color,
+        size: element.size,
+        quantity: element.quantity,
+        personalization: element.personalization,
+        notes: element.notes,
+      },
+    ];
+
+    return orderItems;
+  });
+
   const order = await Order.create({
     user: user,
-
-    stockCode: stockCode,
-    color: color,
-    size: size,
-    quantity: quantity,
-    personalization: personalization,
-    notes: notes,
+    orderItems: orderItems,
   });
   const savedOrder = await order.save();
 
