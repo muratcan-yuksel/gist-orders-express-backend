@@ -2,23 +2,24 @@ const User = require("../models/User");
 const asyncWrapper = require("../middleware/asyncWrapper");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 let refreshTokens = [];
 
 const generateAccessToken = (user) => {
   return jwt.sign(
     { id: user.id, isAdmin: user.isAdmin },
-    "secretKey",
+    process.env.TOKEN_SECRET,
     //expiration time
-    { expiresIn: "2000s" }
+    { expiresIn: "200s" }
   );
 };
 const generateRefreshToken = (user) => {
   return jwt.sign(
     { id: user.id, isAdmin: user.isAdmin },
-    "myRefreshSecretKey"
+    process.env.REFRESH_SECRET,
     //expiration time
-    // { expiresIn: "15m" }
+    { expiresIn: "15m" }
   );
 };
 
@@ -26,7 +27,7 @@ const verifyToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   if (authHeader) {
     const token = authHeader.split(" ")[1];
-    jwt.verify(token, "secretKey", (err, user) => {
+    jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
       if (err) {
         return res.sendStatus(403);
       }
@@ -47,7 +48,7 @@ const refreshToken = (req, res) => {
   if (!refreshTokens.includes(refreshToken)) {
     return res.status(403).json("refresh token is not valid");
   }
-  jwt.verify(refreshToken, "myRefreshSecretKey", (err, user) => {
+  jwt.verify(refreshToken, process.env.REFRESH_SECRET, (err, user) => {
     if (err) {
       return res.sendStatus(403);
     }

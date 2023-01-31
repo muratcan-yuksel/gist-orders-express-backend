@@ -4,12 +4,15 @@ const app = express();
 const mongoose = require("mongoose");
 const dotenv = require("dotenv").config();
 const connectDB = require("./database/connect");
+const cors = require("cors");
 
 // mongoose.connect(process.env.MONGO_CONNECTION_STRING, () =>
 //   console.log("connected to db")
 // );
 
 app.use(express.json());
+app.use(cors());
+
 //import routes
 const userRoutes = require("./routes/users");
 const authRoutes = require("./routes/auth");

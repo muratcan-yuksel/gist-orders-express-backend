@@ -27,6 +27,7 @@ const createOrder = asyncWrapper(async (req, res) => {
     quantity: quantity,
     personalization: personalization,
     notes: notes,
+    file: req.file.path,
   });
   const savedOrder = await order.save();
 

@@ -12,6 +12,7 @@ const orderSchema = new mongoose.Schema({
   quantity: { type: Number, default: 1 },
   personalization: { type: String, required: false },
   notes: { type: String, required: false },
+  file: { type: String, required: true },
 });
 
 module.exports = mongoose.model("Order", orderSchema);

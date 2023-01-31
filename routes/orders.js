@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const upload = require("../middleware/multer");
 
 const {
   generateAccessToken,
@@ -20,7 +21,7 @@ const {
 } = require("../controllers/orders");
 
 router.route("/").get(verifyToken, getOrders);
-router.route("/create").post(verifyToken, createOrder);
+router.route("/create").post(upload.single("file"), verifyToken, createOrder);
 router
   .route("/:id")
   .get(verifyToken, getOrder)
