@@ -5,8 +5,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-let refreshTokens = [];
-
 const generateAccessToken = (user) => {
   return jwt.sign(
     { id: user.id, isAdmin: user.isAdmin },
@@ -25,23 +23,28 @@ const generateAccessToken = (user) => {
 // };
 
 const generateRefreshToken = (user) => {
-  const token = jwt.sign(
-    { id: user.id, isAdmin: user.isAdmin },
-    process.env.REFRESH_SECRET,
-    // expiration time
-    { expiresIn: "15m" }
-  );
+  try {
+    const token = jwt.sign(
+      { id: user.id, isAdmin: user.isAdmin },
+      process.env.REFRESH_SECRET,
+      // expiration time
+      { expiresIn: "15m" }
+    );
 
-  (async function () {
-    const refreshToken = new RefreshToken({
-      // user,
-      token,
-    });
+    (async function () {
+      const refreshToken = new RefreshToken({
+        // user,
+        token,
+      });
 
-    await refreshToken.save();
-  })();
+      await refreshToken.save();
+    })();
 
-  return token;
+    return token;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
 
 const verifyToken = (req, res, next) => {
@@ -137,14 +140,23 @@ const getRefreshToken = async (token) => {
   return refreshToken;
 };
 
-const destroyToken = async (token) => {
-  await RefreshToken.deleteOne({ token });
+const destroyToken = async (req, res) => {
+  const token = req.body.token;
+  try {
+    const deletedToken = await RefreshToken.findOneAndDelete({ token });
+    if (!deletedToken) {
+      return res.status(404).send({ error: "Token not found" });
+    }
+    return res.send({ message: "Token deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({ error: "Server error" });
+  }
 };
 
 module.exports = {
   generateAccessToken,
   generateRefreshToken,
-  refreshTokens,
   verifyToken,
   refreshToken,
   destroyToken,
