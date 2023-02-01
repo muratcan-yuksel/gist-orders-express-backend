@@ -8,6 +8,7 @@ const {
   refreshTokens,
   verifyToken,
   refreshToken,
+  destroyToken,
 } = require("../controllers/auth");
 
 const {
@@ -23,5 +24,6 @@ router.post("/", verifyToken, createUser);
 router.post("/login", loginUser);
 router.get("/:id", verifyToken, getUser);
 router.delete("/:id", verifyToken, deleteUser);
+router.post("/logout", destroyToken);
 
 module.exports = router;

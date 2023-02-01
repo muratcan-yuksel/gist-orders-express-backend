@@ -57,6 +57,19 @@ const updateOrder = asyncWrapper(async (req, res, next) => {
   res.status(200).json({ success: true, data: order });
 });
 
+const getOrdersByUserId = asyncWrapper(async (req, res, next) => {
+  const orders = await Order.find({ userId: req.params.userId });
+  if (!orders) {
+    return next(
+      new ErrorResponse(
+        `Orders not found for user with id of ${req.params.userId}`,
+        404
+      )
+    );
+  }
+  res.status(200).json({ success: true, data: orders });
+});
+
 module.exports = {
   getOrders,
   getOrder,

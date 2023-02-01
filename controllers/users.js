@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const RefreshToken = require("../models/RefreshToken");
 const asyncWrapper = require("../middleware/asyncWrapper");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -67,14 +68,23 @@ const loginUser = asyncWrapper(async (req, res, next) => {
   if (validPass) {
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
-    //push to the refreshtokens array
-    refreshTokens.push(refreshToken);
-    res.json({
+    // //push to the refreshtokens array
+    // refreshTokens.push(refreshToken);
+    // const newRefreshToken = await RefreshToken.create({ token: refreshToken });
+    // // await newRefreshToken.save();
+    // const savedNewRefreshToken = await newRefreshToken.save();
+    const lastRefreshToken = await RefreshToken.findOne(
+      {},
+      {},
+      { sort: { createdAt: -1 } }
+    );
+
+    await res.json({
       username: user.name,
       isAdmin: user.isAdmin,
       userId: user._id,
       accessToken,
-      refreshToken,
+      refreshToken: lastRefreshToken.token,
     });
   } else {
     res.send({ message: "Login failed" });
