@@ -24,7 +24,7 @@ const generateAccessToken = (user) => {
 //   );
 // };
 
-const generateRefreshToken = async (user) => {
+const generateRefreshToken = (user) => {
   const token = jwt.sign(
     { id: user.id, isAdmin: user.isAdmin },
     process.env.REFRESH_SECRET,
@@ -32,12 +32,14 @@ const generateRefreshToken = async (user) => {
     { expiresIn: "15m" }
   );
 
-  const refreshToken = new RefreshToken({
-    // user,
-    token,
-  });
+  (async function () {
+    const refreshToken = new RefreshToken({
+      // user,
+      token,
+    });
 
-  await refreshToken.save();
+    await refreshToken.save();
+  })();
 
   return token;
 };
@@ -88,30 +90,35 @@ const verifyToken = (req, res, next) => {
 
 const refreshToken = async (req, res) => {
   //get refresh token from the user
-  const refreshToken = req.body.token;
+  const tokenFromRequest = req.body.token;
   //send error if no token or token is invalid
-  if (!refreshToken) return res.status(401).json("you are not authenticated");
+  if (!tokenFromRequest)
+    return res.status(401).json("you are not authenticated");
   //check if the token exists in the database
-  const token = await RefreshToken.findOne({ token: refreshToken });
+  const token = await RefreshToken.findOne({ token: tokenFromRequest });
   if (!token) return res.status(403).json("refresh token is not valid");
-  jwt.verify(refreshToken, process.env.REFRESH_SECRET, async (err, user) => {
-    if (err) {
-      return res.sendStatus(403);
+  jwt.verify(
+    tokenFromRequest,
+    process.env.REFRESH_SECRET,
+    async (err, user) => {
+      if (err) {
+        return res.sendStatus(403);
+      }
+      //delete the old refresh token from the database
+      await RefreshToken.deleteOne({ token: tokenFromRequest });
+      //generate new access token and refresh token
+      const newAccessToken = generateAccessToken(user);
+      const newRefreshToken = generateRefreshToken(user);
+      //create a new refresh token in the database
+      // const newToken = new RefreshToken({ token: newRefreshToken });
+      // await newToken.save();
+      //send the new access token and refresh token to the user
+      res.status(200).json({
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+      });
     }
-    //delete the old refresh token from the database
-    await RefreshToken.deleteOne({ token: refreshToken });
-    //generate new access token and refresh token
-    const newAccessToken = generateAccessToken(user);
-    const newRefreshToken = generateRefreshToken(user);
-    //create a new refresh token in the database
-    const newToken = new RefreshToken({ token: newRefreshToken });
-    await newToken.save();
-    //send the new access token and refresh token to the user
-    res.status(200).json({
-      accessToken: newAccessToken,
-      refreshToken: newRefreshToken,
-    });
-  });
+  );
 };
 
 // const destroyToken = (req, res) => {

@@ -84,7 +84,7 @@ const loginUser = asyncWrapper(async (req, res, next) => {
       isAdmin: user.isAdmin,
       userId: user._id,
       accessToken,
-      refreshToken: lastRefreshToken.token,
+      refreshToken,
     });
   } else {
     res.send({ message: "Login failed" });
