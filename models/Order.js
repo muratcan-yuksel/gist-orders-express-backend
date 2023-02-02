@@ -13,6 +13,7 @@ const orderSchema = new mongoose.Schema({
   personalization: { type: String, required: false },
   notes: { type: String, required: false },
   file: { type: String, required: true },
+  status: { type: String, default: "active" },
 });
 
 module.exports = mongoose.model("Order", orderSchema);

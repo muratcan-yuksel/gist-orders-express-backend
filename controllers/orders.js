@@ -58,7 +58,7 @@ const updateOrder = asyncWrapper(async (req, res, next) => {
 });
 
 const getOrdersByUserId = asyncWrapper(async (req, res, next) => {
-  const orders = await Order.find({ userId: req.params.userId });
+  const orders = await Order.find({ user: req.params.user });
   if (!orders) {
     return next(
       new ErrorResponse(
@@ -76,4 +76,5 @@ module.exports = {
   createOrder,
   deleteOrder,
   updateOrder,
+  getOrdersByUserId,
 };

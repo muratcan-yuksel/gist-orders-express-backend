@@ -18,6 +18,7 @@ const {
   createOrder,
   deleteOrder,
   updateOrder,
+  getOrdersByUserId,
 } = require("../controllers/orders");
 
 router.route("/").get(verifyToken, getOrders);
@@ -27,5 +28,5 @@ router
   .get(verifyToken, getOrder)
   .delete(verifyToken, deleteOrder)
   .patch(verifyToken, updateOrder);
-
+router.route("/user/:user").get(getOrdersByUserId);
 module.exports = router;
