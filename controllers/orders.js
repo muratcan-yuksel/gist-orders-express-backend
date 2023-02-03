@@ -26,6 +26,7 @@ const createOrder = asyncWrapper(async (req, res) => {
     notes,
     user,
     name,
+    status,
   } = req.body;
   const order = await Order.create({
     user: user,
@@ -37,6 +38,7 @@ const createOrder = asyncWrapper(async (req, res) => {
     personalization: personalization,
     notes: notes,
     file: req.file.path,
+    status: status,
   });
   const savedOrder = await order.save();
 
@@ -66,6 +68,19 @@ const updateOrder = asyncWrapper(async (req, res, next) => {
   res.status(200).json({ success: true, data: order });
 });
 
+// const getOrdersByUserId = asyncWrapper(async (req, res, next) => {
+//   const orders = await Order.find({ user: req.params.user });
+//   if (!orders) {
+//     return next(
+//       new ErrorResponse(
+//         `Orders not found for user with id of ${req.params.userId}`,
+//         404
+//       )
+//     );
+//   }
+//   res.status(200).json({ success: true, data: orders });
+// });
+
 const getOrdersByUserId = asyncWrapper(async (req, res, next) => {
   const orders = await Order.find({ user: req.params.user });
   if (!orders) {
@@ -76,7 +91,19 @@ const getOrdersByUserId = asyncWrapper(async (req, res, next) => {
       )
     );
   }
-  res.status(200).json({ success: true, data: orders });
+
+  const ordersWithBase64 = orders.map((order) => {
+    const imageBase64 = order.file.toString("base64");
+    return {
+      ...order.toObject(),
+      file: `data:image/jpeg;base64,${imageBase64}`,
+    };
+  });
+
+  res.status(200).json({
+    success: true,
+    data: ordersWithBase64,
+  });
 });
 
 module.exports = {
