@@ -1,5 +1,8 @@
 const Order = require("../models/Order");
 const asyncWrapper = require("../middleware/asyncWrapper");
+const fs = require("fs");
+const path = require("path");
+const mime = require("mime-types");
 
 const getOrders = asyncWrapper(async (req, res) => {
   const orders = await Order.find();
@@ -106,6 +109,39 @@ const getOrdersByUserId = asyncWrapper(async (req, res, next) => {
   });
 });
 
+// const fileName = req.params.fileName;
+// const filePath = path.join(__dirname, "uploads", fileName);
+
+// fs.readFile(filePath, (err, data) => {
+//   if (err) {
+//     return res.status(400).send("File not found.");
+//   }
+
+//   res.setHeader("Content-Type", "application/octet-stream");
+//   res.setHeader("Content-Disposition", `attachment; filename=${fileName}`);
+//   res.send(data);
+// });
+
+const downloadFile = asyncWrapper(async (req, res, next) => {
+  const order = await Order.findById(req.params.id);
+  if (!order) {
+    return next(
+      new ErrorResponse(`Order not found with id of ${req.params.id}`, 404)
+    );
+  }
+
+  const file = order.file;
+  const filePath = path.join(__dirname, "..", "..", "api", file);
+
+  const filename = path.basename(file);
+  const mimetype = mime.lookup(file);
+
+  res.setHeader("Content-disposition", "attachment; filename=" + filename);
+  res.setHeader("Content-type", mimetype);
+
+  return res.sendFile(filePath);
+});
+
 module.exports = {
   getOrders,
   getOrder,
@@ -113,4 +149,5 @@ module.exports = {
   deleteOrder,
   updateOrder,
   getOrdersByUserId,
+  downloadFile,
 };

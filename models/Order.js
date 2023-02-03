@@ -13,7 +13,7 @@ const orderSchema = new mongoose.Schema({
   quantity: { type: Number, default: 1 },
   personalization: { type: String, required: false },
   notes: { type: String, required: false },
-  file: { data: Buffer, contentType: String },
+  file: { type: String, required: false },
   status: { type: String, default: "active" },
 });
 

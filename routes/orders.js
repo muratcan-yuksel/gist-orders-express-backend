@@ -19,6 +19,7 @@ const {
   deleteOrder,
   updateOrder,
   getOrdersByUserId,
+  downloadFile,
 } = require("../controllers/orders");
 
 router.route("/").get(verifyToken, getOrders);
@@ -29,4 +30,5 @@ router
   .delete(verifyToken, deleteOrder)
   .patch(verifyToken, updateOrder);
 router.route("/user/:user").get(getOrdersByUserId);
+router.route("/download/:id").get(downloadFile);
 module.exports = router;
