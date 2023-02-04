@@ -26,7 +26,7 @@ const createOrder = asyncWrapper(async (req, res) => {
     size,
     quantity,
     personalization,
-    notes,
+    note,
     user,
     name,
     status,
@@ -39,7 +39,7 @@ const createOrder = asyncWrapper(async (req, res) => {
     size: size,
     quantity: quantity,
     personalization: personalization,
-    notes: notes,
+    note: note,
     file: req.file.path,
     status: status,
   });
@@ -71,19 +71,6 @@ const updateOrder = asyncWrapper(async (req, res, next) => {
   res.status(200).json({ success: true, data: order });
 });
 
-// const getOrdersByUserId = asyncWrapper(async (req, res, next) => {
-//   const orders = await Order.find({ user: req.params.user });
-//   if (!orders) {
-//     return next(
-//       new ErrorResponse(
-//         `Orders not found for user with id of ${req.params.userId}`,
-//         404
-//       )
-//     );
-//   }
-//   res.status(200).json({ success: true, data: orders });
-// });
-
 const getOrdersByUserId = asyncWrapper(async (req, res, next) => {
   const orders = await Order.find({ user: req.params.user });
   if (!orders) {
@@ -94,32 +81,32 @@ const getOrdersByUserId = asyncWrapper(async (req, res, next) => {
       )
     );
   }
-
-  const ordersWithBase64 = orders.map((order) => {
-    const imageBase64 = order.file.toString("base64");
-    return {
-      ...order.toObject(),
-      file: `data:image/jpeg;base64,${imageBase64}`,
-    };
-  });
-
-  res.status(200).json({
-    success: true,
-    data: ordersWithBase64,
-  });
+  res.status(200).json({ success: true, data: orders });
 });
 
-// const fileName = req.params.fileName;
-// const filePath = path.join(__dirname, "uploads", fileName);
-
-// fs.readFile(filePath, (err, data) => {
-//   if (err) {
-//     return res.status(400).send("File not found.");
+// const getOrdersByUserId = asyncWrapper(async (req, res, next) => {
+//   const orders = await Order.find({ user: req.params.user });
+//   if (!orders) {
+//     return next(
+//       new ErrorResponse(
+//         `Orders not found for user with id of ${req.params.userId}`,
+//         404
+//       )
+//     );
 //   }
 
-//   res.setHeader("Content-Type", "application/octet-stream");
-//   res.setHeader("Content-Disposition", `attachment; filename=${fileName}`);
-//   res.send(data);
+//   const ordersWithBase64 = orders.map((order) => {
+//     const imageBase64 = order.file.toString("base64");
+//     return {
+//       ...order.toObject(),
+//       file: `data:image/jpeg;base64,${imageBase64}`,
+//     };
+//   });
+
+//   res.status(200).json({
+//     success: true,
+//     data: ordersWithBase64,
+//   });
 // });
 
 const downloadFile = asyncWrapper(async (req, res, next) => {
