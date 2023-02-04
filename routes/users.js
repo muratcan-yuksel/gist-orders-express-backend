@@ -17,6 +17,7 @@ const {
   createUser,
   deleteUser,
   loginUser,
+  updateUser,
 } = require("../controllers/users");
 
 router.get("/", verifyToken, getUsers);
@@ -25,5 +26,6 @@ router.post("/login", loginUser);
 router.get("/:id", verifyToken, getUser);
 router.delete("/:id", verifyToken, deleteUser);
 router.post("/logout", destroyToken);
+router.post("/:id", verifyToken, updateUser);
 
 module.exports = router;

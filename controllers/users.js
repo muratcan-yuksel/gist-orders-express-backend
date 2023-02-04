@@ -91,10 +91,28 @@ const loginUser = asyncWrapper(async (req, res, next) => {
   }
 });
 
+const updateUser = asyncWrapper(async (req, res, next) => {
+  const user = await User.findByIdAndUpdate(
+    req.params.id,
+    { $inc: { toPay: req.body.toPay } },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+  if (!user) {
+    return next(
+      new ErrorResponse(`user not found with id of ${req.params.id}`, 404)
+    );
+  }
+  res.status(200).json({ success: true, data: user });
+});
+
 module.exports = {
   getUsers,
   getUser,
   createUser,
   deleteUser,
   loginUser,
+  updateUser,
 };
