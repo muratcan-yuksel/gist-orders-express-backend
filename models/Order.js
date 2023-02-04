@@ -16,6 +16,7 @@ const orderSchema = new mongoose.Schema({
   file: { type: String, required: false },
   status: { type: String, default: "active" },
   createdAt: { type: Date, default: Date.now },
+  price: { type: Number, required: true },
 });
 
 module.exports = mongoose.model("Order", orderSchema);
