@@ -1,17 +1,39 @@
 const User = require("../models/User");
 const RefreshToken = require("../models/RefreshToken");
+const AccessToken = require("../models/AccessToken");
 const asyncWrapper = require("../middleware/asyncWrapper");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const generateAccessToken = (user) => {
-  return jwt.sign(
-    { id: user.id, isAdmin: user.isAdmin },
-    process.env.TOKEN_SECRET,
-    //expiration time
-    { expiresIn: "200s" }
-  );
+  // return jwt.sign(
+  //   { id: user.id, isAdmin: user.isAdmin },
+  //   process.env.TOKEN_SECRET,
+  //   //expiration time
+  //   { expiresIn: "5m" }
+  // );
+  try {
+    const token = jwt.sign(
+      { id: user.id, isAdmin: user.isAdmin },
+      process.env.TOKEN_SECRET,
+      //expiration time
+      { expiresIn: "5m" }
+    );
+    (async function () {
+      const accessToken = new AccessToken({
+        // user,
+        token,
+      });
+
+      await accessToken.save();
+    })();
+
+    return token;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
 // const generateRefreshToken = (user) => {
 //   return jwt.sign(

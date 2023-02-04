@@ -25,7 +25,6 @@ router.post("/", verifyToken, createUser);
 router.post("/login", loginUser);
 router.get("/:id", verifyToken, getUser);
 router.delete("/:id", verifyToken, deleteUser);
-router.post("/logout", destroyToken);
 router.patch("/:id", verifyToken, updateUser);
 
 module.exports = router;
