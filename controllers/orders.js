@@ -30,6 +30,7 @@ const createOrder = asyncWrapper(async (req, res) => {
     user,
     name,
     status,
+    createdAt,
   } = req.body;
   const order = await Order.create({
     user: user,
@@ -42,6 +43,7 @@ const createOrder = asyncWrapper(async (req, res) => {
     note: note,
     file: req.file.path,
     status: status,
+    createdAt: createdAt,
   });
   const savedOrder = await order.save();
 

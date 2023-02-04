@@ -29,6 +29,6 @@ router
   .get(verifyToken, getOrder)
   .delete(verifyToken, deleteOrder)
   .patch(verifyToken, updateOrder);
-router.route("/user/:user").get(getOrdersByUserId);
-router.route("/download/:id").get(downloadFile);
+router.route("/user/:user").get(verifyToken, getOrdersByUserId);
+router.route("/download/:id").get(verifyToken, downloadFile);
 module.exports = router;
