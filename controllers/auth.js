@@ -18,7 +18,7 @@ const generateAccessToken = (user) => {
       { id: user.id, isAdmin: user.isAdmin },
       process.env.TOKEN_SECRET,
       //expiration time
-      { expiresIn: "5m" }
+      { expiresIn: "1h" }
     );
     (async function () {
       const accessToken = new AccessToken({
@@ -50,7 +50,7 @@ const generateRefreshToken = (user) => {
       { id: user.id, isAdmin: user.isAdmin },
       process.env.REFRESH_SECRET,
       // expiration time
-      { expiresIn: "15m" }
+      { expiresIn: "2h" }
     );
 
     (async function () {

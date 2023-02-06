@@ -6,6 +6,7 @@ const orderSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+  userName: { type: String, required: true },
   stockCode: { type: String, required: true },
   name: { type: String, required: true },
   color: { type: String, required: true },

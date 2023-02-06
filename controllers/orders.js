@@ -32,9 +32,11 @@ const createOrder = asyncWrapper(async (req, res) => {
     status,
     createdAt,
     price,
+    userName,
   } = req.body;
   const order = await Order.create({
     user: user,
+    userName: userName,
     stockCode: stockCode,
     name: name,
     color: color,
