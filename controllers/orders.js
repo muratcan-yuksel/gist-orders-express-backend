@@ -124,13 +124,13 @@ const downloadFile = asyncWrapper(async (req, res, next) => {
   }
 
   const file = order.file;
-  const filePath = path.join(__dirname, "..", "..", "api", file);
-
+  const filePath = path.join(process.cwd(), file);
   const filename = path.basename(file);
   const mimetype = mime.lookup(file);
 
   res.setHeader("Content-disposition", "attachment; filename=" + filename);
   res.setHeader("Content-type", mimetype);
+  console.log(filePath);
 
   return res.sendFile(filePath);
 });
