@@ -115,6 +115,12 @@ const getOrdersByUserId = asyncWrapper(async (req, res, next) => {
 //   });
 // });
 
+function generateFilename() {
+  const timestamp = new Date().toISOString();
+  const randomNumber = Math.random().toString(36).substring(2, 8);
+  return `${timestamp}-${randomNumber}`;
+}
+
 const downloadFile = asyncWrapper(async (req, res, next) => {
   const order = await Order.findById(req.params.id);
   if (!order) {
@@ -124,13 +130,14 @@ const downloadFile = asyncWrapper(async (req, res, next) => {
   }
 
   const file = order.file;
-  const filePath = path.join(__dirname, "..", "..", "api", file);
-
-  const filename = path.basename(file);
+  const filePath = path.join(process.cwd(), file);
+  const filename = generateFilename() + path.extname(file);
   const mimetype = mime.lookup(file);
 
   res.setHeader("Content-disposition", "attachment; filename=" + filename);
   res.setHeader("Content-type", mimetype);
+  console.log(filePath);
+  console.log(process.cwd());
 
   return res.sendFile(filePath);
 });
