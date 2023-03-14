@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv").config();
 const connectDB = require("./database/connect");
 const cors = require("cors");
+const functions = require("firebase-functions");
 
 // mongoose.connect(process.env.MONGO_CONNECTION_STRING, () =>
 //   console.log("connected to db")
@@ -26,11 +27,13 @@ app.use("/orders", orderRoutes);
 const port = 3000;
 
 app.get("/", (req, res) => res.send("Hello World!"));
+app.get("/test", (req, res) => res.send("It WORKS!"));
 
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);
     app.listen(port, console.log(`Server is listening on port ${port}...`));
+    exports.app = functions.https.onRequest(app);
   } catch (error) {
     console.log(error);
   }
